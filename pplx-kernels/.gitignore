@@ -1,0 +1,11 @@
+build-cmake
+build
+*.so
+*.egg-info
+*.pyc
+data
+dist
+.ruff_cache
+.mypy_cache
+.pytest_cache
+__pycache__

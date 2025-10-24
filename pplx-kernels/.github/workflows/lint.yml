@@ -1,0 +1,45 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ruff check
+        uses: astral-sh/ruff-action@v2
+        with:
+          version: 0.9.7
+          args: "check --verbose"
+      - name: Ruff format
+        uses: astral-sh/ruff-action@v2
+        with:
+          version: 0.9.7
+          args: "format --check --verbose"
+
+  mypy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mypy
+        run: |
+          python3 -m pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+          python3 -m pip install mypy==1.15.0 pytest==8.3.4 numpy
+          python3 -m mypy src/ tests/
+
+  clang-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clang format
+        run: |
+          find csrc -type f -regex '.*\.\(h\|cpp\|cuh\|cu\)' -exec clang-format-16 --dry-run -Werror {} +
